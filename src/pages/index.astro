@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FilterBar from '../components/FilterBar.astro';
+import JobCard from '../components/JobCard.astro';
+import { SITE } from '../config';
+import { getOpenJobs } from '../lib/jobs';
+import { locationOptions } from '../lib/location';
+import { countLabel } from '../lib/filterJobs';
+
+const jobs = await getOpenJobs();
+const locations = locationOptions(jobs.map((job) => job.data.location));
+---
+
+<BaseLayout title={`Tech jobs in Australia | ${SITE.name}`}>
+  <h1 class="text-3xl font-bold tracking-tight">Tech jobs in Australia</h1>
+  <p class="mt-2 mb-6 text-slate-600">{SITE.tagline}</p>
+
+  <FilterBar locations={locations} />
+
+  <p id="job-count" class="mb-4 text-sm text-slate-600" aria-live="polite">{countLabel(jobs.length)}</p>
+
+  <ul id="job-list" class="grid gap-4">
+    {jobs.map((job) => <JobCard job={job} />)}
+  </ul>
+
+  <div id="no-results" hidden={jobs.length > 0} class="rounded-lg border border-dashed border-slate-300 p-8 text-center text-slate-600">
+    <p>No open roles match right now.</p>
+    <button id="clear-filters" type="button" class="mt-2 font-medium text-accent-700 hover:underline">Clear filters</button>
+  </div>
+</BaseLayout>
+
+<script>
+  import { EMPTY_FILTERS, countLabel, filtersFromSearch, filtersToSearch, matches, type Filters } from '../lib/filterJobs';
+
+  const form = document.querySelector<HTMLFormElement>('#job-filters')!;
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-job]')];
+  const count = document.querySelector<HTMLElement>('#job-count')!;
+  const empty = document.querySelector<HTMLElement>('#no-results')!;
+  const selects = {
+    location: form.elements.namedItem('location') as HTMLSelectElement,
+    workType: form.elements.namedItem('workType') as HTMLSelectElement,
+  };
+
+  /** Ignore query values that aren't real options (stale or hand-edited URLs). */
+  function sanitise(filters: Filters): Filters {
+    const valid = (select: HTMLSelectElement, value: string) =>
+      [...select.options].some((o) => o.value === value) ? value : '';
+    return { location: valid(selects.location, filters.location), workType: valid(selects.workType, filters.workType) };
+  }
+
+  function apply(filters: Filters) {
+    let visible = 0;
+    for (const card of cards) {
+      const show = matches({ location: card.dataset.location!, workType: card.dataset.workType! }, filters);
+      card.hidden = !show;
+      if (show) visible++;
+    }
+    count.textContent = countLabel(visible);
+    empty.hidden = visible > 0;
+    history.replaceState(null, '', `${location.pathname}${filtersToSearch(filters)}${location.hash}`);
+  }
+
+  function current(): Filters {
+    return { location: selects.location.value, workType: selects.workType.value };
+  }
+
+  const initial = sanitise(filtersFromSearch(location.search));
+  selects.location.value = initial.location;
+  selects.workType.value = initial.workType;
+  form.hidden = false;
+  apply(initial);
+
+  form.addEventListener('change', () => apply(current()));
+  // 'reset' fires before the controls are cleared, so apply the empty state directly.
+  form.addEventListener('reset', () => apply(EMPTY_FILTERS));
+  document.querySelector('#clear-filters')!.addEventListener('click', () => form.reset());
+</script>

@@ -23,7 +23,7 @@ Primary goals:
 | Styling | Tailwind CSS (via `@astrojs/tailwind`) |
 | Content | Astro Content Collections (Zod-validated frontmatter) |
 | Filtering | Client-side vanilla JS / Astro islands |
-| Hosting | GitHub Pages (`gh-pages` branch via Actions) |
+| Hosting | GitHub Pages (Actions artifact deploy, no `gh-pages` branch) |
 | CI/CD | GitHub Actions (`.github/workflows/deploy.yml`) |
 
 ## Project Structure
