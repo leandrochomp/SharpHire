@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Runs under Node; declared here rather than adding @types/node for one global.
+declare const process: { env: Record<string, string | undefined> };
+
 // Smoke tests against the built site (`npm run build` first).
 // `*.e2e.ts` keeps these out of Vitest's default `*.test.ts` glob.
 export default defineConfig({
