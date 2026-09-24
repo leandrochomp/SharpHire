@@ -1,0 +1,18 @@
+---
+interface Props {
+  tags: string[];
+  class?: string;
+}
+
+const { tags, class: className } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <ul class:list={['flex flex-wrap gap-1.5', className]} aria-label="Tech stack">
+      {tags.map((tag) => (
+        <li class="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-700">{tag}</li>
+      ))}
+    </ul>
+  )
+}

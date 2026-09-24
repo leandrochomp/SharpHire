@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-accent-50: oklch(0.97 0.02 175);
+  --color-accent-600: oklch(0.55 0.12 175);
+  --color-accent-700: oklch(0.47 0.11 175);
+}
+
+/* Job description Markdown (no typography plugin, by design). */
+@layer components {
+  .job-body {
+    @apply space-y-4 leading-relaxed text-slate-800;
+  }
+  .job-body h2 {
+    @apply pt-2 text-xl font-semibold text-slate-900;
+  }
+  .job-body h3 {
+    @apply font-semibold text-slate-900;
+  }
+  .job-body ul {
+    @apply list-disc space-y-1 pl-6;
+  }
+  .job-body ol {
+    @apply list-decimal space-y-1 pl-6;
+  }
+  .job-body a {
+    @apply text-accent-700 underline;
+  }
+}
