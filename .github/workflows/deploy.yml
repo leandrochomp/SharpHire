@@ -5,8 +5,8 @@ on:
     branches: [main]
   pull_request:
   # Daily rebuild so expired jobs drop off without a new commit.
-  schedule:
-    - cron: '0 14 * * *' # 00:00 AEST
+  #schedule:
+    #- cron: '0 14 * * *' # 00:00 AEST
   workflow_dispatch:
 
 permissions:
