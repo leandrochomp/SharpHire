@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
-  # Daily rebuild so expired jobs drop off without a new commit.
-  #schedule:
-    #- cron: '0 14 * * *' # 00:00 AEST
+  # Daily rebuild disabled along with deployment. Re-enable both together.
+  # schedule:
+  #   - cron: '0 14 * * *' # 00:00 AEST
   workflow_dispatch:
 
 permissions:
@@ -32,12 +32,14 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
       - uses: actions/upload-pages-artifact@v5
-        if: github.event_name != 'pull_request'
+        if: false # deployment disabled; was: github.event_name != 'pull_request'
         with:
           path: dist
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    # Deployment disabled. To re-enable, restore:
+    # if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: false
     needs: build
     runs-on: ubuntu-latest
     permissions:
