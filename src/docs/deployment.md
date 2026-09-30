@@ -6,12 +6,17 @@ Static build (`dist/`) published to **GitHub Pages** by
 
 ## Workflow
 
+> **Deployment is currently disabled.** The `deploy` job and the Pages artifact
+> upload are gated with `if: false`, and the daily `schedule` trigger is
+> commented out. CI (check, unit, build, E2E) still runs. To re-enable, restore
+> the original `if:` conditions and uncomment `schedule` in `deploy.yml`.
+
 | Trigger | Runs | Deploys |
 | --- | --- | --- |
 | Pull request | check, unit, build, E2E | no |
-| Push to `main` | check, unit, build, E2E | yes |
-| Daily 14:00 UTC (00:00 AEST) | same | yes — expired jobs drop off |
-| Manual (`workflow_dispatch`) | same | only from `main` |
+| Push to `main` | check, unit, build, E2E | no (disabled) |
+| ~~Daily 14:00 UTC (00:00 AEST)~~ | disabled | disabled |
+| Manual (`workflow_dispatch`) | same | no (disabled) |
 
 The daily rebuild matters: `closingDate` is checked at **build time**, so without
 it an expired job stays live until the next commit.
